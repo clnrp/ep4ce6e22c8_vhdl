@@ -24,7 +24,7 @@ component dis_3461bs port(c_clk: in bit; c_sel: in std_logic_vector (3 downto 0)
 end component;
 
 -- display component
-component dis4d_3461bs port(c_clk: in bit; dig0,dig1,dig2,dig3: in integer; dig_pin : out std_logic_vector (3 downto 0); seg_pin : out std_logic_vector (7 downto 0));
+component dis4d_3461bs port(c_clk: in bit; value_d: in std_logic_vector (11 downto 0); dig_pin : out std_logic_vector (3 downto 0); seg_pin : out std_logic_vector (7 downto 0));
 end component;
 
 begin
@@ -32,6 +32,6 @@ begin
 	E(0) <= my_or(D(0),D(1)); -- do pacote
 	E(1) <= my_and(D(2),D(3));
 	
-	display : dis4d_3461bs port map(clk, 0,1,2,3, dig, seg); -- display de 4 digitos
+	display : dis4d_3461bs port map(clk, "111100001001", dig, seg); -- display de 4 digitos
 
 end arch;

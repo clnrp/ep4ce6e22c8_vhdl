@@ -14,7 +14,7 @@ use IEEE.NUMERIC_STD.all;
 entity dis4d_3461bs is
     port (
 			  c_clk: in bit;
-			  dig0,dig1,dig2,dig3: in integer;
+			  value_d: in std_logic_vector (11 downto 0);
 			  dig_pin: out std_logic_vector (3 downto 0);
 			  seg_pin: out std_logic_vector (7 downto 0)
 			  );
@@ -40,17 +40,51 @@ function digit (sel: in  integer) return std_logic_vector is
 	end case;
 	return result;
 end digit;
+
+
+function bin12_to_bcd ( b_value : std_logic_vector(11 downto 0) ) return std_logic_vector is
+	variable i : integer:=0;
+	variable bcd : std_logic_vector(15 downto 0) := (others => '0');
+	variable bint : std_logic_vector(11 downto 0) := b_value;
 	
+	begin
+	for i in 0 to 11 loop 		 
+		bcd(15 downto 1) := bcd(14 downto 0);  -- deslocamento para esquerda
+		bcd(0) := bint(11);
+		bint(11 downto 1) := bint(10 downto 0);
+		bint(0) :='0';
+		
+		if(i < 11 and bcd(3 downto 0) > "0100") then   
+			bcd(3 downto 0) := std_logic_vector(unsigned(bcd(3 downto 0)) + "0011"); -- soma 3 se bcd for maior que 4
+		end if;
+		
+		if(i < 11 and bcd(7 downto 4) > "0100") then  
+			bcd(7 downto 4) := std_logic_vector(unsigned(bcd(7 downto 4)) + "0011"); -- soma 3 se bcd for maior que 4
+		end if;
+		
+		if(i < 11 and bcd(11 downto 8) > "0100") then  
+			bcd(11 downto 8) := std_logic_vector(unsigned(bcd(11 downto 8)) + "0011"); -- soma 3 se bcd for maior que 4
+		end if;
+		
+		if(i < 11 and bcd(15 downto 9) > "0100") then 
+			bcd(15 downto 12) := std_logic_vector(unsigned(bcd(15 downto 12)) + "0011"); -- soma 3 se bcd for maior que 4
+		end if;
+		
+	end loop;
+	return bcd;
+end bin12_to_bcd;
 	
 begin
 
-process (c_clk) is -- sensível ao clock
+process (c_clk, value_d) is -- sensível ao clock
 	variable cnt_dig: std_logic_vector (3 downto 0) := "0001";
 	variable aux: std_logic_vector (3 downto 0) := "1111";
 	variable cnt_wait: integer range 0 to 50000000;
+	variable digits: std_logic_vector (15 downto 0);
 	begin
+	  digits := bin12_to_bcd(value_d);
      if(c_clk'event and c_clk = '1') then -- borda de subida	
-			if(cnt_wait >= 30000000) then 
+			if(cnt_wait >= 30000) then 
 				cnt_wait := 0;
 				cnt_dig := std_logic_vector(shift_left(unsigned(cnt_dig),1));
 				if(cnt_dig = "0000") then
@@ -63,11 +97,11 @@ process (c_clk) is -- sensível ao clock
 
 			dig_pin <= aux; -- os digitos do display devem ser acionados um por vez 	 
 			case cnt_dig is
-				when "0001" => seg_pin <= digit(dig0);
-				when "0010" => seg_pin <= digit(dig1);
-				when "0100" => seg_pin <= digit(dig2);
-      		when "1000" => seg_pin <= digit(dig3);
-				when others => seg_pin <= digit(dig0);
+				when "0001" => seg_pin <= digit(to_integer(unsigned(digits(3 downto 0))));
+				when "0010" => seg_pin <= digit(to_integer(unsigned(digits(7 downto 4))));
+				when "0100" => seg_pin <= digit(to_integer(unsigned(digits(11 downto 8))));
+      		when "1000" => seg_pin <= digit(to_integer(unsigned(digits(15 downto 12))));
+				when others => seg_pin <= digit(to_integer(unsigned(digits(3 downto 0))));
 			end case;
 	  end if;
 end process;	
