@@ -1,3 +1,7 @@
+-- ep4ce6e22c8 - tests
+-- 16-bit to 4-bit multiplexer
+-- Author: Cleoner Pietralonga
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 

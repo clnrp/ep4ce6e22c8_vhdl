@@ -1,3 +1,6 @@
+-- ep4ce6e22c8 - tests
+-- 1-bit full adder
+-- Author: Cleoner Pietralonga
 
 entity fulladd_1 is
 

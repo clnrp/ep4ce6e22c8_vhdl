@@ -1,3 +1,7 @@
+-- ep4ce6e22c8 - test microcontroller
+-- 4 segment display
+-- Author: Cleoner Pietralonga 
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 --use IEEE.STD_LOGIC_ARITH.ALL; 

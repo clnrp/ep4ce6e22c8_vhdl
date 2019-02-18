@@ -1,3 +1,7 @@
+-- OMDAZZ FPGA Board EP4CE6E22C8
+-- main file
+-- Author: Cleoner Pietralonga
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.STD_LOGIC_ARITH.ALL;

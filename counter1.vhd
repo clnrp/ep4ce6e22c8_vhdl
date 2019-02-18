@@ -1,4 +1,3 @@
-
 entity counter1 is
 
 port(
